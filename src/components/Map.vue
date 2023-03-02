@@ -61,12 +61,19 @@ function addLayers(map) {
     data: "https://services.landsd.gov.hk/3d-data/3dtiles/2021_ke/tileset.json",
     loader: Tiles3DLoader,
     loadOptions: {},
+    pickable: true,
     onTileError: (err) => {
       console.log(err);
     },
     onTilesetLoad: (tileset) => {
       // console.log(tileset);
     },
+    onClick: (e) => {
+      // console.log("Building Layer Clicked:", e);
+    },
+    onHover: (e) => {
+      // console.log("Building Layer Hover:", e);
+    }
   });
 
   map.addLayer(building);
@@ -87,6 +94,10 @@ onMounted(() => {
     addControls(map);
     addSources(map);
     addLayers(map);
+  });
+
+  map.on("click", (e) => {
+    console.log("Map Clicked: ", e);
   });
 });
 </script>
