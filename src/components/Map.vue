@@ -64,7 +64,7 @@ function addLayers(map) {
     onTileError: (err) => {
       console.log(err);
     },
-    onTilesetLoader: (tileset) => {
+    onTilesetLoad: (tileset) => {
       // console.log(tileset);
     },
   });
