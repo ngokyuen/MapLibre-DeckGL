@@ -8,6 +8,70 @@
 
 <script setup>
 import { onMounted } from "vue";
+
+import { Tile3DLayer } from "@deck.gl/geo-layers";
+import { Tiles3DLoader } from "@loaders.gl/3d-tiles";
+
+import { MapboxLayer } from "@deck.gl/mapbox";
+
+function addControls(map) {
+  map.addControl(
+    new maplibregl.NavigationControl({
+      visualizePitch: true,
+      showZoom: true,
+      showCompass: true,
+    })
+  );
+}
+
+function addSources(map) {
+  map.addSource("hkImagery", {
+    type: "raster",
+    tiles: [
+      // "https://mapapi.geodata.gov.hk/gs/api/v1.0.0/xyz/imagery/WGS84/{z}/{x}/{y}.png",
+      "https://mapapi.geodata.gov.hk/gs/api/v1.0.0/xyz/basemap/WGS84/{z}/{x}/{y}.png",
+    ],
+    tileSize: 256,
+    attribution: "Map & Data from Lands Department (HK Gov)",
+  });
+  map.addSource("hkLabelEN", {
+    type: "raster",
+    tiles: [
+      "https://mapapi.geodata.gov.hk/gs/api/v1.0.0/xyz/label/hk/en/WGS84/{z}/{x}/{y}.png",
+    ],
+    tileSize: 256,
+  });
+}
+
+function addLayers(map) {
+  map.addLayer({
+    id: "hkImageryLayer",
+    type: "raster",
+    source: "hkImagery",
+  });
+  map.addLayer({
+    id: "hkLabelENLayer",
+    type: "raster",
+    source: "hkLabelEN",
+  });
+
+  const building = new MapboxLayer({
+    id: "building",
+    type: Tile3DLayer,
+    data: "https://services.landsd.gov.hk/3d-data/3dtiles/2021_ke/tileset.json",
+    loader: Tiles3DLoader,
+    loadOptions: {},
+    onTileError: (err) => {
+      console.log(err);
+    },
+    onTilesetLoader: (tileset) => {
+      // console.log(tileset);
+    },
+  });
+
+  map.addLayer(building);
+}
+
 onMounted(() => {
   var map = new maplibregl.Map({
     container: "map",
@@ -16,36 +80,13 @@ onMounted(() => {
     zoom: 10, // starting zoom,
   });
 
-  console.log(map);
+  console.log("map: ", map);
 
   map.on("load", () => {
     // console.log("map load")
-    map.addSource("hkImagery", {
-      type: "raster",
-      tiles: [
-        // "https://mapapi.geodata.gov.hk/gs/api/v1.0.0/xyz/imagery/WGS84/{z}/{x}/{y}.png",
-        "https://mapapi.geodata.gov.hk/gs/api/v1.0.0/xyz/basemap/WGS84/{z}/{x}/{y}.png",
-      ],
-      tileSize: 256,
-    });
-    map.addSource("hkLabelEN", {
-      type: "raster",
-      tiles: [
-        "https://mapapi.geodata.gov.hk/gs/api/v1.0.0/xyz/label/hk/en/WGS84/{z}/{x}/{y}.png",
-      ],
-      tileSize: 256,
-    });
-
-    map.addLayer({
-      id: "hkImageryLayer",
-      type: "raster",
-      source: "hkImagery",
-    });
-    map.addLayer({
-      id: "hkLabelENLayer",
-      type: "raster",
-      source: "hkLabelEN",
-    });
+    addControls(map);
+    addSources(map);
+    addLayers(map);
   });
 });
 </script>
