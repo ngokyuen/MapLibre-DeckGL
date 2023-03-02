@@ -68,12 +68,12 @@ function addLayers(map) {
     onTilesetLoad: (tileset) => {
       // console.log(tileset);
     },
-    onClick: (e) => {
-      // console.log("Building Layer Clicked:", e);
+    onClick: (info, event) => {
+      console.log("Building Layer Clicked:", info, event);
     },
-    onHover: (e) => {
+    onHover: (info, event) => {
       // console.log("Building Layer Hover:", e);
-    }
+    },
   });
 
   map.addLayer(building);
@@ -96,8 +96,8 @@ onMounted(() => {
     addLayers(map);
   });
 
-  map.on("click", (e) => {
-    console.log("Map Clicked: ", e);
+  map.on("click", (info, event) => {
+    // console.log("Map Clicked: ", info, event);
   });
 });
 </script>
